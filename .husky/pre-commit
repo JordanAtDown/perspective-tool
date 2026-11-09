@@ -1,0 +1,2 @@
+# Bloque le commit si le style, les tests ou le build (typecheck inclus) échouent.
+npm run check && npm test && npm run build

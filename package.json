@@ -1,0 +1,32 @@
+{
+  "name": "perspective-tool",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Générateur de grilles de perspective à imprimer en A4",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "check": "biome check .",
+    "fix": "biome check --write .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.6.6",
+    "@types/node": "^26.6.6",
+    "husky": "^9.1.7",
+    "jsdom": "^31.0.0",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.7",
+    "vitest": "^5.1.0"
+  },
+  "dependencies": {
+    "@fontsource/archivo": "^5.3.0",
+    "@fontsource/ibm-plex-mono": "^5.3.0",
+    "@fontsource/public-sans": "^5.3.0"
+  }
+}

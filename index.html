@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grille de perspective A4</title>
+<meta name="description" content="Générateur de grilles de perspective à imprimer en A4 : 1, 2, 3 points de fuite et perspective curviligne.">
+</head>
+<body>
+<div class="app">
+  <div class="stage-wrap">
+    <div class="stage"><svg id="view" preserveAspectRatio="xMidYMid meet" aria-label="Aperçu de la grille sur la feuille A4"></svg></div>
+    <p class="hint">Fais glisser les points de fuite et la ligne d'horizon. Les points peuvent sortir de la feuille.</p>
+  </div>
+
+  <div class="panel">
+    <div>
+      <h1>Grille de perspective A4</h1>
+      <p class="lede">Règle ta scène, télécharge le PDF, imprime-le et glisse-le sous ton calque.</p>
+    </div>
+
+    <div class="card">
+      <h2>Scène</h2>
+      <div class="row">
+        <span class="lbl">Type de perspective</span>
+        <div class="seg" id="family">
+          <button type="button" data-v="lin">Classique</button>
+          <button type="button" data-v="curv">Curviligne</button>
+        </div>
+      </div>
+      <div class="row">
+        <span class="lbl">Points de fuite</span>
+        <div class="seg" id="mode">
+          <button type="button" data-v="1" data-f="lin">1 point</button>
+          <button type="button" data-v="2" data-f="lin">2 points</button>
+          <button type="button" data-v="3" data-f="lin">3 points</button>
+          <button type="button" data-v="4" data-f="curv">4 points</button>
+          <button type="button" data-v="5" data-f="curv">5 points</button>
+          <button type="button" data-v="6" data-f="curv">6 points</button>
+        </div>
+        <p class="note" id="modenote"></p>
+      </div>
+      <div class="row">
+        <span class="lbl">Format A4</span>
+        <div class="seg" id="orient">
+          <button type="button" data-v="portrait">Portrait</button>
+          <button type="button" data-v="landscape">Paysage</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Préréglages</h2>
+      <p class="note">Un point de départ, que tu ajustes ensuite à la main. Le format portrait ou paysage est conservé.</p>
+      <div id="presets"></div>
+    </div>
+
+    <div class="card">
+      <h2>Position</h2>
+      <div class="row">
+        <label for="hy">Ligne d'horizon <span class="val" id="hyv"></span></label>
+        <input type="range" id="hy" step="1">
+      </div>
+      <div class="row">
+        <label for="rot">Inclinaison de l'horizon <span class="val" id="rotv"></span></label>
+        <div class="inline"><input type="range" id="rot" min="-45" max="45" step="1"><button class="mini" type="button" id="flat">À plat</button></div>
+      </div>
+      <div class="vps" id="vpfields">
+        <div class="vp" data-i="0"><span><i class="dot" style="background:rgb(31,95,168)"></i>PF 1 (mm)</span><input type="number" id="vp0x" inputmode="numeric" step="1"><small id="vp0d"></small></div>
+        <div class="vp" data-i="1"><span><i class="dot" style="background:rgb(196,84,44)"></i>PF 2 (mm)</span><input type="number" id="vp1x" inputmode="numeric" step="1"><small id="vp1d"></small></div>
+        <div class="vp" data-i="2"><span><i class="dot" style="background:rgb(47,133,90)"></i>PF 3 · x (mm)</span><input type="number" id="vp2x" inputmode="numeric" step="1"><small>depuis le bord gauche</small></div>
+        <div class="vp" data-i="2"><span><i class="dot" style="background:rgb(47,133,90)"></i>PF 3 · y (mm)</span><input type="number" id="vp2y" inputmode="numeric" step="1"><small id="vp2d"></small></div>
+        <div class="vp" data-c="1"><span><i class="dot" style="background:#2a313b"></i>Centre (mm)</span><input type="number" id="cvx" inputmode="numeric" step="1"><small id="cvxd"></small></div>
+        <div class="vp" data-c="1"><span><i class="dot" style="background:#2a313b"></i>Rayon (mm)</span><input type="number" id="cvr" inputmode="numeric" step="1" min="15"><small>taille du cercle</small></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Tracé</h2>
+      <div class="row">
+        <label for="n">Lignes de fuite par point <span class="val" id="nv"></span></label>
+        <input type="range" id="n" min="6" max="60" step="1">
+      </div>
+      <div class="row" id="parrow">
+        <label for="par"><span id="parlbl">Verticales</span> <span class="val" id="parv"></span></label>
+        <input type="range" id="par" min="0" max="40" step="5">
+      </div>
+      <label class="check"><input type="checkbox" id="color"> Une couleur par point de fuite</label>
+      <label class="check"><input type="checkbox" id="label"> Noter les réglages en bas de page</label>
+    </div>
+
+    <div class="card">
+      <h2>Calques</h2>
+      <div class="layers" id="layers">
+        <div class="layer" data-l="lines"><button type="button" class="eye" aria-label="Masquer les lignes de fuite"></button><span class="lname">Lignes de fuite</span><button type="button" class="step" data-d="-10" aria-label="Moins opaque">−</button><span class="val op"></span><button type="button" class="step" data-d="10" aria-label="Plus opaque">+</button></div>
+        <div class="layer" data-l="hor"><button type="button" class="eye" aria-label="Masquer l'horizon et les repères"></button><span class="lname">Horizon et repères</span><button type="button" class="step" data-d="-10" aria-label="Moins opaque">−</button><span class="val op"></span><button type="button" class="step" data-d="10" aria-label="Plus opaque">+</button></div>
+        <div class="layer" data-l="grid"><button type="button" class="eye" aria-label="Masquer la grille de fond"></button><span class="lname">Grille de fond</span><button type="button" class="step" data-d="-10" aria-label="Moins opaque">−</button><span class="val op"></span><button type="button" class="step" data-d="10" aria-label="Plus opaque">+</button></div>
+      </div>
+      <div class="row" id="gridrow">
+        <span class="lbl">Carreaux de la grille de fond</span>
+        <div class="seg" id="grid">
+          <button type="button" data-v="5">5 mm</button>
+          <button type="button" data-v="10">1 cm</button>
+        </div>
+      </div>
+      <p class="note">Ce qui est masqué ici n'est pas imprimé. Une opacité basse se voit mieux à travers le calque sans gêner le trait.</p>
+    </div>
+
+    <div class="card">
+      <h2>Imprimer</h2>
+      <div class="actions" id="dlactions">
+        <button class="btn" type="button" id="pdf">Télécharger le PDF</button>
+        <button class="btn ghost" type="button" id="svg">SVG</button>
+      </div>
+      <p class="status" id="status"></p>
+      <ol class="steps">
+        <li>Imprime en taille réelle (100 %), sans « ajuster à la page ».</li>
+        <li>Pose ton calque ou ton papier layout par-dessus et scotche les deux feuilles.</li>
+        <li>Tes réglages restent mémorisés ici pour la prochaine fois.</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="/src/main.ts"></script>
+</body>
+</html>
